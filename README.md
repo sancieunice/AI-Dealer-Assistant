@@ -6,7 +6,7 @@
 
 Production-style conversational AI for automotive dealers — RAG over a live parts catalogue, structured tool calling, multi-turn memory, guardrails, and a full evaluation suite. Includes demand forecasting (Prophet vs baseline) as Part B.
 
-**Author:** [sancieunice](https://github.com/sancieunice) · **Docs:** [DESIGN.md](DESIGN.md) · **Eval:** [eval/results.md](eval/results.md)
+**Repo:** [github.com/sancieunice/AI-Dealer-Assistant](https://github.com/sancieunice/AI-Dealer-Assistant) · **Author:** [sancieunice](https://github.com/sancieunice) · **Docs:** [DESIGN.md](DESIGN.md) · **Eval:** [eval/results.md](eval/results.md)
 
 ---
 
