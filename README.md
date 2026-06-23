@@ -4,6 +4,28 @@ A conversational assistant for automotive dealers. Users can search parts, check
 
 **Links:** [DESIGN.md](DESIGN.md) · [eval/results.md](eval/results.md) · [forecasting/results.md](forecasting/results.md)
 
+## Screenshots
+
+**Home**
+
+![Home screen](screenshots/home.png)
+
+**Part search and cheapest follow-up**
+
+![Product retrieval](screenshots/retrieval.png)
+
+**Order draft and confirmation**
+
+![Order flow](screenshots/order.png)
+
+**Clarification (tyres → vehicle → model)**
+
+![Clarification](screenshots/clarification.png)
+
+**Guardrails (weather, unsupported make, off-topic)**
+
+![Guardrails](screenshots/guardrail.png)
+
 ## Features
 
 - Retrieval-augmented search over ~600 SKUs (ChromaDB + sentence-transformers)
