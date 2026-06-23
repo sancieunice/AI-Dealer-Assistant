@@ -72,7 +72,6 @@ See [screenshots/README.md](screenshots/README.md) for capture instructions.
 | LLM | Groq `llama-3.1-8b-instant` (optional — works without API key) |
 | Validation | Pydantic v2 |
 | Forecasting | pandas + Prophet |
-| Alt UI | Streamlit (`ui/app.py`) |
 
 ---
 
@@ -109,9 +108,7 @@ Open **http://localhost:3000**
 
 **Windows shortcut:** double-click `start.bat` (starts backend + frontend in separate terminals).
 
-Streamlit alternative: `streamlit run ui/app.py`
-
-**First run:** the backend downloads the embedding model (~90 MB) and builds the Chroma index from `catalogue.csv`. This takes 1–2 minutes and creates local `models/` and `chroma/` folders (not committed — see `.gitignore`).
+**First run:** the backend downloads the embedding model (~90 MB) and builds the Chroma index from `catalogue.csv`. This takes 1–2 minutes and creates local `models/` and `chroma/` folders 
 
 ### Evaluation & forecasting
 
@@ -163,8 +160,6 @@ how many in stock?
 
 ## Evaluation results (summary)
 
-We treat the assistant like a small product, not a demo script. There is a **20-case regression suite** covering happy paths, ambiguity, guardrails, hallucination traps, and multi-turn flows.
-
 | Metric | Score | What it means |
 |--------|-------|---------------|
 | **Cases passed** | **20/20** | Every scenario behaves as specified |
@@ -197,8 +192,6 @@ Why Prophet? Promo weeks spike sales in ways a simple average lags behind. Proph
 ---
 
 ## Repository structure
-
-Only source, data, and docs are committed — no secrets, caches, or local runtime files.
 
 ```text
 AI-Dealer-Assistant/
