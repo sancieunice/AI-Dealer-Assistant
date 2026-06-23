@@ -285,3 +285,190 @@ One moving average is easy to explain in a stand-up. Prophet costs more CPU and 
 | Observability | Print logging | Structured logs + tracing (LangSmith) |
 | Scaling | Single Flask worker | Gunicorn + horizontal scaling behind load balancer |
 | Index updates | Rebuild on row-count change | Incremental Chroma upserts on catalogue sync |
+
+## Development Challenges — What Broke and How We Fixed It
+
+Most of this project did not fail on embeddings or model size. It failed on **conversation state** — the boring stuff that separates a demo from something you could put in front of a dealer.
+
+### The pattern we kept hitting
+
+```text
+User says something reasonable
+    → routing picks the wrong intent
+    → OR slots from turn N pollute turn N+1
+    → assistant looks "dumb" even though retrieval was fine
+```
+
+Our eval suite with **multi-turn replay** is what caught these. Single-shot tests would have passed while the UI felt broken.
+
+### Issue 1 — One word broke routing
+
+**Symptom:** *"What's the cheapest chain lube you stock?"* → assistant asked for a vehicle.
+
+**Cause:** The substring `"stock"` in `"you stock?"` matched stock-lookup intent, not catalogue browsing.
+
+**Fix:** Split phrase lists — `CATALOGUE_STOCK_PHRASES` ("do you stock", "you carry") vs `STOCK_PHRASES` ("check stock", "how many in stock").
+
+**Lesson:** Intent routing is lexical surgery. One false positive matters.
+
+---
+
+### Issue 2 — Slot memory amnesia
+
+**Symptom:** User discusses BRK-1042, tries to order 46 units (only 43 in stock), then asks *"how many in stock?"* → *"Which vehicle or SKU should I look up?"*
+
+**Cause:** Two bugs stacked:
+1. After an order turn, `focus_sku` was copied to `sku` but then **deleted** by slot cleanup because `focus_sku` was not kept in entities.
+2. Stock follow-ups like *"how many in stock?"* were not treated as contextual — they don't say *"it"*, so the reference resolver never fired.
+
+**Fix:** `is_stock_followup()`, `_remember_order_sku()` after every order attempt, and preserve both `sku` + `focus_sku` on focused follow-ups.
+
+**Lesson:** Production assistants fail on **pronoun resolution and implicit references**, not on vector search quality.
+
+---
+
+### Issue 3 — Stale context caused wrong orders
+
+**Symptom:** *"can you order fereari"* (typo) still drafted an order for a completely different SKU from a prior turn.
+
+**Cause:** Any message containing `"order"` triggered `create_order` while `focus_sku` and `quantity` were still in memory from an earlier search.
+
+**Fix:** `is_focused_order_followup()` — only treat bare *"order 6 units"* as an order when it clearly continues the current product. `detect_unsupported_make()` clears transaction slots for Ferrari/BMW/etc.
+
+**Lesson:** **Guardrails + slot clearing on topic shift** matter as much as RAG grounding.
+
+---
+
+### Issue 4 — Over-filtering retrieval on follow-ups
+
+**Symptom:** After a tyre search, *"which one is cheapest"* returned nothing.
+
+**Cause:** `product_keyword=tyre` filtered out valid **Tube** products that were correct for the vehicle.
+
+**Fix:** Skip strict keyword filtering on pricing follow-ups; rank by price over the vehicle + category set already retrieved.
+
+**Lesson:** Follow-up queries need **different retrieval rules** than fresh searches.
+
+---
+
+### Issue 5 — UI showed data the graph forgot
+
+**Symptom:** `find_parts_by_vehicle` ran successfully but React showed empty product cards.
+
+**Cause:** Tool output lived in `tool_traces` but was never copied to `retrieved_docs` (what the API returns to the frontend).
+
+**Fix:** Sync tool results into state after execution.
+
+**Lesson:** Agent graphs have **multiple consumers** (LLM, UI, eval) — state must be explicit.
+
+---
+
+### What we learned (the honest summary)
+
+| Layer | How often it broke | What fixed it |
+|-------|-------------------|---------------|
+| Routing / intent | Often | Tighter phrase rules + eval |
+| Slot memory | Often | `focus_sku`, follow-up detectors, cleanup logic |
+| Retrieval | Sometimes | Metadata filters, reranker tuning |
+| LLM phrasing | Rarely (when Groq enabled) | Prompt + temperature 0.1; deterministic fallback |
+
+This is worth saying in an interview: **we did not fine-tune our way out of broken memory.** We instrumented, reproduced in eval, and fixed the graph.
+
+---
+
+## Future Improvement — QLoRA Fine-Tuning for Smoother Dialogue
+
+### What the LLM does today (and does not do)
+
+```text
+Rule-based graph  →  decides WHAT to do (search / stock / order / clarify / refuse)
+Groq Llama 3.1    →  decides HOW to say it (wording only)
+Catalogue + tools →  source of truth for prices, stock, SKUs
+```
+
+Without `GROQ_API_KEY`, the assistant uses a **deterministic formatter** — correct and grounded, but robotic. With Groq, replies read more naturally but can still feel template-like on multi-turn flows.
+
+**QLoRA fine-tuning would improve the generation layer only** — not routing, not tool choice, not retrieval. That separation is deliberate and production-appropriate.
+
+### Why QLoRA specifically
+
+| Approach | Fit for this project |
+|----------|---------------------|
+| Full fine-tune | Expensive, overkill for ~600 SKUs |
+| Prompt engineering only | Fast, already used — hits a ceiling on tone/consistency |
+| **QLoRA** | Low VRAM (~1× 8B model on a single GPU), fast iteration, easy to swap adapters |
+
+QLoRA (Quantized Low-Rank Adaptation) trains small adapter matrices on top of a frozen base model (e.g. Llama 3.1 8B). You get custom conversational style without retraining 8B parameters.
+
+### What we would fine-tune for
+
+**Target behaviours** (not facts — facts stay in tools/RAG):
+
+- Natural clarification tone: *"Got it — which vehicle is this for?"* vs rigid templates
+- Smooth multi-turn transitions: acknowledging prior context without repeating full product lists
+- Consistent dealer-facing voice: concise, professional, no markdown dumps
+- Graceful refusals and stock errors: *"BRK-1042 only has 43 units — want me to draft an order for 43 instead?"*
+
+**What we would NOT fine-tune into the model:**
+
+- Prices, stock counts, SKUs (stay in catalogue + tools)
+- Tool selection (stay rule-based or move to LLM function-calling later with eval gates)
+- Vehicle compatibility (stay in metadata filters)
+
+### Proposed training pipeline
+
+```text
+1. Collect seed data
+   ├── Export 20 eval multi-turn flows as JSONL
+   ├── Synthetic expansion: catalogue rows → (user query, grounded assistant reply) pairs
+   └── Human review or LLM-as-judge for grounding violations
+
+2. Format as instruction tuning
+   {
+     "system": "<same grounding rules as prompts.py>",
+     "context": "<retrieved docs + tool output + slots>",
+     "user": "how many in stock?",
+     "assistant": "BRK-1042 (Brake Disc Rotor) has 43 units at INR 2,470."
+   }
+
+3. Train QLoRA adapter (e.g. rank=16, alpha=32)
+   ├── Base: meta-llama/Llama-3.1-8B-Instruct
+   ├── Framework: Hugging Face PEFT + bitsandbytes (4-bit)
+   └── Loss: standard causal LM on assistant tokens only
+
+4. Evaluate BEFORE merging
+   ├── Existing eval suite must stay 20/20 on routing/tools/grounding
+   ├── Add generation rubric: fluency, brevity, context acknowledgment
+   └── Reject adapter if grounding accuracy drops
+
+5. Deploy adapter behind same graph
+   └── Replace GroqGenerator call with local vLLM/Ollama + LoRA weights
+```
+
+### Why this would impress reviewers (if explained correctly)
+
+Saying *"I'd fine-tune with QLoRA"* alone is generic. What stands out is explaining **where** it fits:
+
+> "We fixed correctness with the graph and eval first. QLoRA is the next step for **UX polish** — how the assistant speaks — while keeping prices and stock in tools so we never train hallucinations into the model."
+
+That shows you understand the industry pattern: **RAG + tools for facts, fine-tuning for form.**
+
+### Risks to mention (shows maturity)
+
+- Fine-tuning on too little data → overfits eval phrasing, fails on new dealers
+- Training on LLM-generated labels without grounding checks → silent hallucination drift
+- Coupling generation to routing before eval is green → debugging becomes impossible
+
+**Recommendation for this codebase:** ship with current architecture for the assignment; add QLoRA only after freezing the 20-case eval suite as a regression gate.
+
+---
+
+## Future Improvements (summary)
+
+| Priority | Item | Impact |
+|----------|------|--------|
+| High | Session store (Redis) | Survive restarts, horizontal scale |
+| High | Hybrid BM25 + vector retrieval | Better SKU keyword recall |
+| Medium | QLoRA generation adapter | Smoother multi-turn dialogue |
+| Medium | LLM function-calling (with eval gate) | More flexible tool routing |
+| Low | Cross-encoder reranker | Retrieval precision on broad queries |
