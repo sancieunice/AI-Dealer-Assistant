@@ -1,0 +1,439 @@
+{
+  "generated_at": "2026-06-23T23:24:40.235123+00:00",
+  "case_count": 20,
+  "retrieval": {
+    "hit_rate": 0.7777777777777778,
+    "mrr": 0.7777777777777778,
+    "context_precision": 0.7777777777777778
+  },
+  "generation": {
+    "route_accuracy": 1.0,
+    "tool_accuracy": 1.0,
+    "grounding_accuracy": 1.0,
+    "clarification_accuracy": 1.0,
+    "overall_success_rate": 1.0
+  },
+  "cases": [
+    {
+      "id": "clarify_brakes",
+      "category": "ambiguous",
+      "query": "Need brake pads",
+      "expected_route": "clarify",
+      "actual_route": "clarify",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "Which vehicle model do you need brakes for?"
+    },
+    {
+      "id": "clarify_tyres",
+      "category": "ambiguous",
+      "query": "I need tyres.",
+      "expected_route": "clarify",
+      "actual_route": "clarify",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "Which vehicle model do you need tyres & tubes for?"
+    },
+    {
+      "id": "vehicle_search",
+      "category": "happy_path",
+      "query": "Show brake pads for Bajaj Pulsar 150",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "find_parts_by_vehicle"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "find_parts_by_vehicle",
+        "relevant_terms": [
+          "Bajaj Pulsar 150",
+          "Brakes"
+        ]
+      },
+      "answer_preview": "Here are matching parts for Bajaj Pulsar 150:\n- Brake Disc Rotor \u2014 Bajaj Pulsar 150 (BRK-1046) \u2014 INR 2085, stock 354\n- Brake Pad Set \u2014 Bajaj Pulsar 150 (BRK-1002) \u2014 INR 1460, stock 136\n- Brake Lever \u2014 Bajaj Pulsar 150 (BRK-1085) \u2014 INR 365, "
+    },
+    {
+      "id": "assignment_brake_pads",
+      "category": "happy_path",
+      "query": "Do you have brake pads for a Bajaj Pulsar 150?",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "find_parts_by_vehicle"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "find_parts_by_vehicle",
+        "relevant_terms": [
+          "Bajaj Pulsar 150",
+          "Brakes"
+        ]
+      },
+      "answer_preview": "Here are matching parts for Bajaj Pulsar 150:\n- Brake Disc Rotor \u2014 Bajaj Pulsar 150 (BRK-1046) \u2014 INR 2085, stock 354\n- Brake Pad Set \u2014 Bajaj Pulsar 150 (BRK-1002) \u2014 INR 1460, stock 136\n- Brake Lever \u2014 Bajaj Pulsar 150 (BRK-1085) \u2014 INR 365, "
+    },
+    {
+      "id": "cheapest_chain_lube",
+      "category": "happy_path",
+      "query": "What is the cheapest chain lube you stock?",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": [
+          "Chain Lube"
+        ]
+      },
+      "answer_preview": "I checked all 12 matching catalogue options. The cheapest chain lube is:\n- Chain Lube 400ml \u2014 Universal (CHN-1052) by Shell \u2014 INR 365, stock: 77."
+    },
+    {
+      "id": "stock_check",
+      "category": "happy_path",
+      "query": "Check stock for BRK-1042",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "check_stock"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "check_stock",
+        "relevant_terms": [
+          "BRK-1042"
+        ]
+      },
+      "answer_preview": "Brake Disc Rotor \u2014 Bajaj Dominar 400 (BRK-1042) is available. Stock: 43 units. Price: INR 2470."
+    },
+    {
+      "id": "order_creation",
+      "category": "happy_path",
+      "query": "Place an order for 10 units of BRK-1042 for ABC Motors.",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "create_order"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "create_order",
+        "relevant_terms": [
+          "BRK-1042"
+        ]
+      },
+      "answer_preview": "Order draft for ABC Motors is ready for confirmation:\n- 10 x Brake Disc Rotor \u2014 Bajaj Dominar 400 (BRK-1042) = INR 24700\nTotal: INR 24700."
+    },
+    {
+      "id": "guardrail_weather",
+      "category": "out_of_scope",
+      "query": "What is the weather today?",
+      "expected_route": "refuse",
+      "actual_route": "refuse",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "I can help only with automotive parts, stock information and dealer orders."
+    },
+    {
+      "id": "guardrail_joke",
+      "category": "out_of_scope",
+      "query": "Tell me a joke about politics.",
+      "expected_route": "refuse",
+      "actual_route": "refuse",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "I can help only with automotive parts, stock information and dealer orders."
+    },
+    {
+      "id": "hallucination_ferrari",
+      "category": "out_of_scope",
+      "query": "Do you have Ferrari parts?",
+      "expected_route": "refuse",
+      "actual_route": "refuse",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "We don't carry Ferrari parts in our catalogue. I can help only with motorcycle and scooter parts from our listed inventory."
+    },
+    {
+      "id": "vehicle_ambiguity_duke",
+      "category": "ambiguous",
+      "query": "Need tyres for Duke.",
+      "expected_route": "clarify",
+      "actual_route": "clarify",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "Did you mean Duke 200 or Duke 390?"
+    },
+    {
+      "id": "vehicle_ambiguity_pulsar",
+      "category": "ambiguous",
+      "query": "Need brake pads for Pulsar.",
+      "expected_route": "clarify",
+      "actual_route": "clarify",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "Which model did you mean: Pulsar 150, Pulsar 220F, or Pulsar NS200?"
+    },
+    {
+      "id": "pricing_followup_setup_turn1",
+      "category": "multi_turn",
+      "query": "Show tyres for Royal Enfield Himalayan",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "find_parts_by_vehicle"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": [
+          "Royal Enfield Himalayan",
+          "Tyres & Tubes"
+        ]
+      },
+      "answer_preview": "Here are matching parts for Royal Enfield Himalayan:\n- Tube \u2014 Royal Enfield Himalayan (TYR-1021) \u2014 INR 535, stock 145"
+    },
+    {
+      "id": "pricing_followup_setup_turn2",
+      "category": "multi_turn",
+      "query": "which one is the cheapest",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": [
+          "Royal Enfield Himalayan",
+          "Tyres & Tubes"
+        ]
+      },
+      "answer_preview": "The cheapest tyre for the Royal Enfield Himalayan is:\n- Tube \u2014 Royal Enfield Himalayan (TYR-1021) by CEAT \u2014 INR 535, stock: 145."
+    },
+    {
+      "id": "clarify_then_search_turn1",
+      "category": "multi_turn",
+      "query": "Need brake pads",
+      "expected_route": "clarify",
+      "actual_route": "clarify",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "Which vehicle model do you need brakes for?"
+    },
+    {
+      "id": "clarify_then_search_turn2",
+      "category": "multi_turn",
+      "query": "Bajaj Pulsar 150",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": [
+          "Bajaj Pulsar 150",
+          "Brakes"
+        ]
+      },
+      "answer_preview": "For the Bajaj Pulsar 150, we recommend the following brake pads:\n\n1. Brake Pad Set \u2014 Bajaj Pulsar 150 (BRK-1002) by TVS, INR 1460, Stock: 136\n2. Brake Pad Set is not available in the catalogue, however we have Brake Lever \u2014 Bajaj Pulsar 150"
+    },
+    {
+      "id": "cheapest_then_stock_followup_turn1",
+      "category": "multi_turn",
+      "query": "Show brake pads for Bajaj Pulsar 150",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "find_parts_by_vehicle"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "find_parts_by_vehicle",
+        "relevant_terms": [
+          "Bajaj Pulsar 150",
+          "Brakes"
+        ]
+      },
+      "answer_preview": "Here are matching parts for Bajaj Pulsar 150:\n- Brake Disc Rotor \u2014 Bajaj Pulsar 150 (BRK-1046) \u2014 INR 2085, stock 354\n- Brake Pad Set \u2014 Bajaj Pulsar 150 (BRK-1002) \u2014 INR 1460, stock 136\n- Brake Lever \u2014 Bajaj Pulsar 150 (BRK-1085) \u2014 INR 365, "
+    },
+    {
+      "id": "cheapest_then_stock_followup_turn2",
+      "category": "multi_turn",
+      "query": "Which one is cheapest?",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": null,
+        "relevant_terms": []
+      },
+      "answer_preview": "I checked all 4 matching catalogue options for the Bajaj Pulsar 150. The cheapest brake pad is:\n- Brake Lever \u2014 Bajaj Pulsar 150 (BRK-1085) by TVS \u2014 INR 365, stock: 4 (low stock: 4 units)."
+    },
+    {
+      "id": "cheapest_then_stock_followup_turn3",
+      "category": "multi_turn",
+      "query": "How much stock does it have?",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "check_stock"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "check_stock",
+        "relevant_terms": []
+      },
+      "answer_preview": "Brake Lever \u2014 Bajaj Pulsar 150 (BRK-1085) is available. Stock: 4 units. Price: INR 365."
+    },
+    {
+      "id": "cheapest_then_stock_followup_turn4",
+      "category": "multi_turn",
+      "query": "order 6 units",
+      "expected_route": "retrieve",
+      "actual_route": "retrieve",
+      "tools": [
+        "create_order"
+      ],
+      "passed": true,
+      "checks": {
+        "route_ok": true,
+        "tool_ok": true,
+        "answer_ok": true,
+        "grounding_ok": true,
+        "retrieval_ok": true,
+        "expected_tool": "create_order",
+        "relevant_terms": []
+      },
+      "answer_preview": "I could not create a clean order yet: BRK-1085 has only 4 units in stock."
+    }
+  ],
+  "failure_analysis": {}
+}

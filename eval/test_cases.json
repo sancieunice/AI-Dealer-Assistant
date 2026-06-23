@@ -1,0 +1,175 @@
+[
+  {
+    "id": "clarify_brakes",
+    "category": "ambiguous",
+    "query": "Need brake pads",
+    "expected_route": "clarify",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["vehicle", "which"]
+  },
+  {
+    "id": "clarify_tyres",
+    "category": "ambiguous",
+    "query": "I need tyres.",
+    "expected_route": "clarify",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["vehicle", "which"]
+  },
+  {
+    "id": "vehicle_search",
+    "category": "happy_path",
+    "query": "Show brake pads for Bajaj Pulsar 150",
+    "expected_route": "retrieve",
+    "expected_tool": "find_parts_by_vehicle",
+    "relevant_terms": ["Bajaj Pulsar 150", "Brakes"],
+    "answer_must_contain": ["Bajaj Pulsar 150", "INR"]
+  },
+  {
+    "id": "assignment_brake_pads",
+    "category": "happy_path",
+    "query": "Do you have brake pads for a Bajaj Pulsar 150?",
+    "expected_route": "retrieve",
+    "expected_tool": "find_parts_by_vehicle",
+    "relevant_terms": ["Bajaj Pulsar 150", "Brakes"],
+    "answer_must_contain": ["Bajaj Pulsar 150", "INR"]
+  },
+  {
+    "id": "cheapest_chain_lube",
+    "category": "happy_path",
+    "query": "What is the cheapest chain lube you stock?",
+    "expected_route": "retrieve",
+    "expected_tool": null,
+    "relevant_terms": ["Chain Lube"],
+    "answer_must_contain": ["cheapest", "INR", "CHN-"]
+  },
+  {
+    "id": "stock_check",
+    "category": "happy_path",
+    "query": "Check stock for BRK-1042",
+    "expected_route": "retrieve",
+    "expected_tool": "check_stock",
+    "relevant_terms": ["BRK-1042"],
+    "answer_must_contain": ["BRK-1042", "stock"]
+  },
+  {
+    "id": "order_creation",
+    "category": "happy_path",
+    "query": "Place an order for 10 units of BRK-1042 for ABC Motors.",
+    "expected_route": "retrieve",
+    "expected_tool": "create_order",
+    "relevant_terms": ["BRK-1042"],
+    "answer_must_contain": ["ABC Motors", "BRK-1042", "INR"]
+  },
+  {
+    "id": "guardrail_weather",
+    "category": "out_of_scope",
+    "query": "What is the weather today?",
+    "expected_route": "refuse",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["automotive", "parts"]
+  },
+  {
+    "id": "guardrail_joke",
+    "category": "out_of_scope",
+    "query": "Tell me a joke about politics.",
+    "expected_route": "refuse",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["automotive", "parts"]
+  },
+  {
+    "id": "hallucination_ferrari",
+    "category": "out_of_scope",
+    "query": "Do you have Ferrari parts?",
+    "expected_route": "refuse",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["Ferrari", "catalogue"]
+  },
+  {
+    "id": "vehicle_ambiguity_duke",
+    "category": "ambiguous",
+    "query": "Need tyres for Duke.",
+    "expected_route": "clarify",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["Duke 200", "Duke 390"]
+  },
+  {
+    "id": "vehicle_ambiguity_pulsar",
+    "category": "ambiguous",
+    "query": "Need brake pads for Pulsar.",
+    "expected_route": "clarify",
+    "expected_tool": null,
+    "relevant_terms": [],
+    "answer_must_contain": ["Pulsar 150", "Pulsar NS200"]
+  },
+  {
+    "id": "pricing_followup_setup",
+    "category": "multi_turn",
+    "turns": [
+      {
+        "query": "Show tyres for Royal Enfield Himalayan",
+        "expected_route": "retrieve",
+        "relevant_terms": ["Royal Enfield Himalayan", "Tyres & Tubes"],
+        "answer_must_contain": ["Royal Enfield Himalayan"]
+      },
+      {
+        "query": "which one is the cheapest",
+        "expected_route": "retrieve",
+        "relevant_terms": ["Royal Enfield Himalayan", "Tyres & Tubes"],
+        "answer_must_contain": ["cheapest", "INR"]
+      }
+    ]
+  },
+  {
+    "id": "clarify_then_search",
+    "category": "multi_turn",
+    "turns": [
+      {
+        "query": "Need brake pads",
+        "expected_route": "clarify",
+        "answer_must_contain": ["vehicle", "which"]
+      },
+      {
+        "query": "Bajaj Pulsar 150",
+        "expected_route": "retrieve",
+        "relevant_terms": ["Bajaj Pulsar 150", "Brakes"],
+        "answer_must_contain": ["Bajaj Pulsar 150", "INR"]
+      }
+    ]
+  },
+  {
+    "id": "cheapest_then_stock_followup",
+    "category": "multi_turn",
+    "turns": [
+      {
+        "query": "Show brake pads for Bajaj Pulsar 150",
+        "expected_route": "retrieve",
+        "expected_tool": "find_parts_by_vehicle",
+        "relevant_terms": ["Bajaj Pulsar 150", "Brakes"],
+        "answer_must_contain": ["Bajaj Pulsar 150"]
+      },
+      {
+        "query": "Which one is cheapest?",
+        "expected_route": "retrieve",
+        "answer_must_contain": ["cheapest", "INR"]
+      },
+      {
+        "query": "How much stock does it have?",
+        "expected_route": "retrieve",
+        "expected_tool": "check_stock",
+        "answer_must_contain": ["stock", "INR"]
+      },
+      {
+        "query": "order 6 units",
+        "expected_route": "retrieve",
+        "expected_tool": "create_order",
+        "answer_must_contain": ["4 units", "BRK-1085"]
+      }
+    ]
+  }
+]

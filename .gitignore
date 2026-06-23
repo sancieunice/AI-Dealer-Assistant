@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Secrets — never commit
+.env
+.env.local
+.streamlit/secrets.toml
+
+# Generated at runtime (rebuilt on first start)
+chroma/
+.chroma/
+models/
+orders.json
+
+# Forecasting outputs (regenerate with python -m forecasting.evaluate)
+forecasting/forecast_results.csv
+forecasting/prophet_results.csv
+forecasting/forecast_*.png
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+.agents/
+
+# Logs
+*.log
+npm-debug.log*
