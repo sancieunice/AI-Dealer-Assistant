@@ -1,4 +1,4 @@
-# VIKMO Dealer Assistant
+# Dealer Assistant
 
 A conversational assistant for automotive dealers. Users can search parts, check stock, create order drafts, and continue multi-turn conversations. A separate forecasting module predicts weekly demand per SKU.
 
@@ -41,7 +41,7 @@ A conversational assistant for automotive dealers. Users can search parts, check
 - LangGraph
 - ChromaDB
 - Sentence Transformers (`all-MiniLM-L6-v2`)
-- Groq Llama 3.1 (optional — works without an API key)
+- Groq Llama 3.1
 - Prophet
 
 ## Running locally
