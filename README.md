@@ -115,6 +115,15 @@ python -m forecasting.evaluate
 
 Prophet (MAE 5.81) beats a 4-week moving average baseline (MAE 7.86) on a chronological holdout. Not connected to the chatbot — see [forecasting/results.md](forecasting/results.md).
 
+Plot the test-window forecast (from project root):
+
+```bash
+python -m forecasting.evaluate
+python -m forecasting.plots --sku BRK-1041
+```
+
+![Forecast](screenshots/forecasting.png)
+
 ## Project layout
 
 ```
