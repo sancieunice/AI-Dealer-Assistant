@@ -1,16 +1,16 @@
 # Design Document
 
-How the VIKMO Dealer Assistant is built and why I made the choices I did.
+How the Dealer Assistant is built and why I made the choices I did.
 
 ## Overview
 
 ```text
-React / Streamlit
-       ↓
+React
+ ↓
 Flask (server.py)
-       ↓
+ ↓
 LangGraph: guardrails → entities → clarification → retrieval → tools → generation
-       ↓
+ ↓
 ChromaDB + catalogue.csv
 ```
 
